@@ -820,6 +820,16 @@ constant_numbers = {
     "CMP_EQUAL"                             : 1,
     "CMP_GREATER"                           : 2,
 
+    # RoadStop Types
+    'RST_PASSENGER'                         : 0,
+    'RST_FREIGHT'                           : 1,
+    'RST_ALL'                               : 2,
+
+    'RST_DRAW_MODE_NONE'                    : 0,
+    'RST_DRAW_MODE_ROAD'                    : 1,
+    'RST_DRAW_MODE_OVERLAY'                 : 2,
+    'RST_DRAW_MODE_ALL'                     : 3,
+
     # TTD Strings
     "TTD_STR_CARGO_PLURAL_NOTHING"                          : 0x000E,
     "TTD_STR_CARGO_PLURAL_PASSENGERS"                       : 0x000F,

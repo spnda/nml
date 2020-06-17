@@ -210,6 +210,7 @@ used_ids = [
     BlockAllocation(0, 255, "Airport Tile"),
     BlockAllocation(0, 62, "Roadtype"),
     BlockAllocation(0, 62, "Tramtype"),
+    BlockAllocation(0, 255, "RoadStop"),
 ]
 
 

@@ -1,0 +1,36 @@
+grf {
+    grfid: "NML\38";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_NAME);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+spritelayout spritelayout_roadstop {
+    ground {
+        sprite:  GROUNDSPRITE_NORMAL;
+    }
+    building {
+        sprite: spriteset_roadstop;
+        recolour_mode: PALETTE_USE_DEFAULT;
+		xextent: 8;
+		yextent: 16;
+		zextent: 27;
+		xoffset: 4;
+		yoffset: 2;
+		zoffset: 0;
+		hide_sprite: 0;
+    }
+}
+
+item (FEAT_ROADSTOPS, item_roadstop)  {
+    property {
+        class: "NML\34";
+        type: RST_PASSENGER;
+        name: string(STR_038_ROADSTOP);
+        classname: string(STR_038_ROADSTOP_CLASS);
+    }
+    graphics {
+        default: spritelayout_roadstop;
+    }
+}

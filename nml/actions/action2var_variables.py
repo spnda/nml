@@ -16,10 +16,10 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, generic, nmlop
 
 # Use feature 0x14 for towns (accessible via station/house/industry parent scope)
-varact2vars = 0x15 * [{}]
-varact2vars60x = 0x15 * [{}]
-# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x14, None, 0x14, 0x14, None, 0x0A, 0x14, None, None, None, None, 0x14, None, None, None, None]
+varact2vars = 0x16 * [{}]
+varact2vars60x = 0x16 * [{}]
+# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14
+varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x15, None, 0x15, 0x15, None, 0x0A, 0x15, None, None, None, None, 0x15, None, None, None, None, None]
 
 def default_60xvar(name, args, pos, info):
     """
@@ -285,18 +285,21 @@ varact2vars_base_stations = {
     'build_date'          : {'var': 0xFA, 'start': 0, 'size': 16, 'value_function': value_add_constant(701265)}
 }
 
+def basestation_cargotype(name, args, pos, info):
+    return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="cargotype"), [])
+
 varact2vars60x_base_stations = {
-    'cargo_amount_waiting'      : {'var': 0x60, 'start': 0, 'size': 32},
-    'cargo_time_since_pickup'   : {'var': 0x61, 'start': 0, 'size': 32},
+    'cargo_amount_waiting'      : {'var': 0x60, 'start': 0, 'size': 32, 'param_function': basestation_cargotype},
+    'cargo_time_since_pickup'   : {'var': 0x61, 'start': 0, 'size': 32, 'param_function': basestation_cargotype},
     'cargo_rating'              : {'var': 0x62, 'start': 0, 'size': 32, 'value_function': value_mul_div(101, 256)},
-    'cargo_time_en_route'       : {'var': 0x63, 'start': 0, 'size': 32},
-    'cargo_last_vehicle_speed'  : {'var': 0x64, 'start': 0, 'size':  8},
-    'cargo_last_vehicle_age'    : {'var': 0x64, 'start': 8, 'size':  8},
-    'cargo_accepted'            : {'var': 0x65, 'start': 3, 'size':  1},
-    'cargo_accepted_ever'       : {'var': 0x69, 'start': 0, 'size':  1},
-    'cargo_accepted_last_month' : {'var': 0x69, 'start': 1, 'size':  1},
-    'cargo_accepted_this_month' : {'var': 0x69, 'start': 2, 'size':  1},
-    'cargo_accepted_bigtick'    : {'var': 0x69, 'start': 3, 'size':  1},
+    'cargo_time_en_route'       : {'var': 0x63, 'start': 0, 'size': 32, 'param_function': basestation_cargotype},
+    'cargo_last_vehicle_speed'  : {'var': 0x64, 'start': 0, 'size':  8, 'param_function': basestation_cargotype},
+    'cargo_last_vehicle_age'    : {'var': 0x64, 'start': 8, 'size':  8, 'param_function': basestation_cargotype},
+    'cargo_accepted'            : {'var': 0x65, 'start': 3, 'size':  1, 'param_function': basestation_cargotype},
+    'cargo_accepted_ever'       : {'var': 0x69, 'start': 0, 'size':  1, 'param_function': basestation_cargotype},
+    'cargo_accepted_last_month' : {'var': 0x69, 'start': 1, 'size':  1, 'param_function': basestation_cargotype},
+    'cargo_accepted_this_month' : {'var': 0x69, 'start': 2, 'size':  1, 'param_function': basestation_cargotype},
+    'cargo_accepted_bigtick'    : {'var': 0x69, 'start': 3, 'size':  1, 'param_function': basestation_cargotype},
 }
 
 varact2vars_stations = {
@@ -757,6 +760,27 @@ varact2vars_tramtype = {
 }
 # Tramtypes have no 60+x variables
 
+#
+# Roadstops (feature 0x14)
+#
+varact2vars_roadstop = {
+    **varact2vars_base_stations,
+    'view'                  : {'var': 0x40, 'start':  0, 'size':  8},
+    # 'current_roadtype'      : {'var': 0x41, 'start':  0, 'size':  8},
+    'terrain_type'          : {'var': 0x42, 'start':  0, 'size':  8}, # TILETYPE_NORMAL, TILETYPE_DESERT etc.
+    'road_type'             : {'var': 0x43, 'start':  8, 'size':  8}, # The roadtype of this tile
+    'tram_type'             : {'var': 0x44, 'start':  8, 'size':  8}, # The tramtype of this tile
+    'town_zone'             : {'var': 0x45, 'start':  0, 'size':  8},
+    'company_num'           : {'var': 0x46, 'start':  0, 'size':  8}, # 0..14 company number
+    'company_type'          : {'var': 0x46, 'start': 16, 'size':  2}, # PLAYERTYPE_HUMAN, PLAYERTYPE_AI etc.
+    'company_colour1'       : {'var': 0x46, 'start': 24, 'size':  4}, # COLOUR_XXX. See https://newgrf-specs.tt-wiki.net/wiki/NML:List_of_default_colour_translation_palettes#Company_colour_helper_functions
+    'company_colour2'       : {'var': 0x46, 'start': 28, 'size':  4}, # Same as above
+    'random_bits'           : {'var': 0x5F, 'start':  8, 'size':  2},
+}
+
+varact2vars60x_roadstop = {
+    **varact2vars60x_base_stations,
+}
 
 #
 # Towns are not a true feature, but accessible via the parent scope of e.g. industries, stations
@@ -805,4 +829,6 @@ varact2vars[0x11] = varact2vars_airporttiles
 varact2vars60x[0x11] = varact2vars60x_airporttiles
 varact2vars[0x12] = varact2vars_roadtype
 varact2vars[0x13] = varact2vars_tramtype
-varact2vars[0x14] = varact2vars_towns
+varact2vars[0x14] = varact2vars_roadstop
+varact2vars60x[0x14] = varact2vars60x_roadstop
+varact2vars[0x15] = varact2vars_towns
