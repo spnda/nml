@@ -13,19 +13,26 @@ with nmlL; if not, write to the Free Software Foundation, Inc.,
 
 from nml.editors import extract_tables
 
-output_file = "nml_vs.tmLanguage.json"
+output_file = "newgrfml.tmLanguage.json"
 
 text1 = """\
 {
-    "name": "nml",
+    "name": "newgrfml",
+    "scopeName": "source.newgrfml",
     "fileTypes": [
         ".nml",
         ".pnml"
     ],
     "patterns": [
         {
-            "include": "#comments"
+            "include": "#comment"
         },
+		{
+			"include": "#numeric-literal"
+		},
+		{
+			"include": "#string"
+		},
         {
             "include": "#block"
         },
@@ -40,14 +47,69 @@ text1 = """\
         }
     ],
     "repository": {
-        "comments": {
+        "comment": {
             "patterns": [
                 {
-                    "name": "comment.line.number-sign.nml",
+                    "name": "comment.line.newgrfml",
                     "begin": "//",
                     "end": "$"
+                },
+                {
+                    "name": "comment.block.newgrfml",
+                    "begin": "/\\\*",
+                    "end": "\\\*/"
                 }
             ]
+        },
+		"numeric-literal": {
+			"patterns": [
+				{
+					"name": "constant.numeric.decimal.newgrfml",
+					"match": "\\\\b[0-9]+\\\\b"
+				},
+				{
+					"name": "constant.numeric.binary.newgrfml",
+					"match": "\\\\b0(b|B)[01]*\\\\b"
+				},
+				{
+					"name": "constant.numeric.hex.newgrfml",
+					"match": "\\\\b0(x|X)[0-9a-fA-F]*\\\\b"
+				}
+			]
+		},
+        "string": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.newgrfml",
+                    "begin": "\\"",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.begin.newgrfml"
+                        }
+                    },
+                    "end": "\\"",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.newgrfml"
+                        }
+                    }
+                },
+                {
+                    "name": "string.quoted.single.newgrfml",
+                    "begin": "'",
+                    "beginCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.begin.newgrfml"
+                        }
+                    },
+                    "end": "'",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.string.end.newgrfml"
+                        }
+                    }
+                }
+            ]    
         },
 """
 
@@ -55,7 +117,7 @@ text2 = """\
         "block": {
             "patterns": [
                 {
-                    "name": "keyword.other.nml",
+                    "name": "storage.type.primitive.newgrfml",
                     "match": "blocks"
                 }
             ]
@@ -66,7 +128,7 @@ text3 = """\
         "variable": {
             "patterns": [
                 {
-                    "name": "support.variable.nml",
+                    "name": "variable.other.property.newgrfml",
                     "match": "variables"
                 }
             ]
@@ -77,7 +139,7 @@ text4 = """\
         "feature": {
             "patterns": [
                 {
-                    "name": "support.class.error.nml",
+                    "name": "support.class.newgrfml",
                     "match": "features"
                 }
             ]
@@ -88,7 +150,7 @@ text5 = """\
         "callback": {
             "patterns": [
                 {
-                    "name": "constant.numeric.nml",
+                    "name": "constant.numeric.newgrfml",
                     "match": "callbacks"
                 }
             ]
@@ -96,16 +158,15 @@ text5 = """\
 """
 
 text6 = """\
-    },
-    "scopeName": "source.nml"
+    }
 }
 """
 
 
 # Build VS .tmLanguage file
 def write_file(fname):
-    line = r"(?<![_$[:alnum:]])(?:(?<=\.\.\.)|(?<!\.))("
-    lineend = r")(?![_$[:alnum:]])(?:(?=\.\.\.)|(?!\.))"
+    line = r"(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))("
+    lineend = r")(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
     with open(fname, "w") as file:
         file.write(text1)
         file.write(text2.replace("blocks", line + "|".join(extract_tables.block_names_table) + lineend))
